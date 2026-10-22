@@ -82,7 +82,7 @@ class OloidGallery extends StatelessWidget {
                       ('subTitle 22', OloidTypography.subTitle),
                       ('headline 17', OloidTypography.headline),
                       ('body 15', OloidTypography.body),
-                      ('caption 13', OloidTypography.caption),
+                      ('caption 12', OloidTypography.caption),
                     ])
                       Text(name, style: style.copyWith(color: c.textPrimary)),
                   ],
@@ -165,6 +165,14 @@ class OloidGallery extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
+                    OloidButton(
+                      label: '보조 액션',
+                      variant: OloidButtonVariant.tonal,
+                      dense: true,
+                      icon: const Icon(Icons.add_rounded),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(height: OloidSpacing.s3),
                     OloidButton(
                       label: '확인 시트 열기',
                       onPressed: () => OloidConfirmSheet.show(

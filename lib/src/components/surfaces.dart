@@ -202,17 +202,25 @@ class OloidSettingRow extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.icon,
+    this.iconColor,
     this.trailing,
     this.onTap,
+    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   });
 
   final String title;
   final String? subtitle;
   final IconData? icon;
 
+  /// 상태를 알리는 아이콘일 때만 의미 색을 준다. 기본은 textSecondary.
+  final Color? iconColor;
+
   /// 없고 [onTap]이 있으면 chevron을 그린다.
   final Widget? trailing;
   final VoidCallback? onTap;
+
+  /// 패널 안에 넣을 때는 좌우 여백을 0으로 둔다.
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -225,11 +233,15 @@ class OloidSettingRow extends StatelessWidget {
               onTap!();
             },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: padding,
         child: Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: OloidIconSize.nav, color: c.textSecondary),
+              Icon(
+                icon,
+                size: OloidIconSize.nav,
+                color: iconColor ?? c.textSecondary,
+              ),
               const SizedBox(width: 12),
             ],
             Expanded(

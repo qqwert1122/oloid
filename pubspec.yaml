@@ -1,6 +1,6 @@
 name: oloid
 description: "Oloid — LuceForge 앱 공용 디자인 시스템. memoaid의 토큰·테마·컴포넌트를 기준으로 한다."
-version: 0.1.0
+version: 0.2.0
 publish_to: 'none'
 
 environment:

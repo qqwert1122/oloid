@@ -27,7 +27,7 @@ dependencies:
   oloid:
     git:
       url: https://github.com/qqwert1122/oloid.git
-      ref: v0.1.0   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
+      ref: v0.2.0   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
 ```
 
 Xcode Cloud와 GitHub Actions는 앱 저장소만 clone하므로 `path:` 의존성으로는 CI 빌드가 깨진다. CI에서 받을 수 있게 반드시 git 의존성으로 둔다.
@@ -100,7 +100,7 @@ Container(
 | 그룹 | 클래스 | 값 |
 | --- | --- | --- |
 | 색 | `OloidColors` (`context.oloid`) | primary, background, backgroundSecondary, surface, textPrimary, textSecondary, border, shadow, divider · 의미색 person, location, date, favorite, danger, todo, positive, warning · AI 전용 aiGradient*, aiBorder, aiInset |
-| 글자 | `OloidTypography` | largeTitle 34, title 28, subTitle 22, headline 17, body 15, input 16, caption 13, tab 16, button 15 |
+| 글자 | `OloidTypography` | largeTitle 34, title 28, subTitle 22, headline 17, body 15, bodyStrong 15/600, input 16, caption 12, captionStrong 12/600, tab 16, button 15 · `textTheme`(Material 역할 매핑) · 자간은 모두 0 |
 | radius | `OloidRadius` | xs 4, chip 6, control 8, card 12, button 16, sheet 20, pill 24, dialog 32 |
 | 간격 | `OloidSpacing` | s1 4 … s8 32, screen 16, row 16, sheet 24, indent 24, pageTitle, chip |
 | 아이콘 | `OloidIconSize` | metadata 12, row 16, nav 18, picker 24 |
@@ -116,8 +116,8 @@ Container(
 | `OloidListRow(child:, onTap:)` | 기록성 콘텐츠. 카드 대신 row + 얇은 구분선 |
 | `OloidChip.tag('카페')` / `.person('민지')` / `.location('성수동')` / `OloidChip(label:, color:)` | 메타데이터 |
 | `OloidPanel(child:)` | stat card 같은 독립된 정보 덩어리 |
-| `OloidSectionHeader('알림')`, `OloidSettingRow(icon:, title:, subtitle:, onTap:)` | 설정 화면 |
-| `OloidButton(label:, onPressed:, variant:)` | primary / secondary / destructive |
+| `OloidSectionHeader('알림')`, `OloidSettingRow(icon:, title:, subtitle:, trailing:, onTap:, padding:)` | 설정 화면. 스위치 줄은 `trailing: Switch.adaptive(...)`, 패널 안에서는 `padding`의 좌우를 0으로 |
+| `OloidButton(label:, onPressed:, variant:, icon:, dense:)` | primary / tonal(옅은 브랜드색, 보조 액션) / secondary / destructive. `dense`는 패널 안 40px 높이 |
 | `OloidConfirmSheet.show(...)` → `bool?` | 삭제·수정 전 확인 |
 | `OloidInfoSheet.show(...)` | 안내 + 확인 버튼 |
 | `showOloidBottomSheet(context, builder:, heightFactor: 0.7)` | 작성·편집·상세 sheet |

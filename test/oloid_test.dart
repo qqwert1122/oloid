@@ -24,6 +24,25 @@ void main() {
       expect(theme.extension<OloidColors>()!.surface, const Color(0xFFF7F7F7));
     });
 
+    test('Material 면·글자 역할을 중립 토큰에 묶는다', () {
+      const brand = Color(0xFFEF233C);
+      final scheme = OloidTheme.dark(primary: brand).colorScheme;
+
+      expect(scheme.primary, brand);
+      expect(scheme.surface, const Color(0xFF333333));
+      expect(scheme.surfaceContainerHigh, const Color(0xFF2A2A2A));
+      expect(scheme.onSurface, Colors.white);
+      expect(scheme.outlineVariant, const Color(0xFF3C3C3C));
+    });
+
+    test('텍스트 역할의 자간을 0으로 고정한다', () {
+      final textTheme = OloidTheme.light().textTheme;
+
+      expect(textTheme.bodyMedium!.letterSpacing, 0);
+      expect(textTheme.labelLarge!.letterSpacing, 0);
+      expect(textTheme.bodySmall!.fontSize, 12);
+    });
+
     test('Pretendard를 패키지 경로로 지정한다', () {
       expect(
         OloidTheme.light().textTheme.bodyMedium!.fontFamily,
@@ -81,6 +100,50 @@ void main() {
       await tester.tap(find.text('취소'));
       await tester.pumpAndSettle();
       expect(result, isFalse);
+    });
+  });
+
+  group('OloidButton', () {
+    testWidgets('tonal은 옅은 브랜드색 면에 브랜드색 글자와 아이콘을 그린다', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          OloidButton(
+            label: '저장',
+            variant: OloidButtonVariant.tonal,
+            icon: const Icon(Icons.add_rounded),
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      final text = tester.widget<Text>(find.text('저장'));
+      expect(text.style!.color, Colors.indigoAccent);
+      expect(find.byIcon(Icons.add_rounded), findsOneWidget);
+    });
+
+    testWidgets('secondary는 비활성 버튼과 글자색이 다르다', (tester) async {
+      await tester.pumpWidget(
+        _app(
+          Column(
+            children: [
+              OloidButton(
+                label: '활성',
+                variant: OloidButtonVariant.secondary,
+                onPressed: () {},
+              ),
+              const OloidButton(
+                label: '비활성',
+                variant: OloidButtonVariant.secondary,
+                onPressed: null,
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final enabled = tester.widget<Text>(find.text('활성')).style!.color;
+      final disabled = tester.widget<Text>(find.text('비활성')).style!.color;
+      expect(enabled, isNot(disabled));
     });
   });
 
