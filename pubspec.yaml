@@ -1,0 +1,35 @@
+name: oloid
+description: "Oloid — LuceForge 앱 공용 디자인 시스템. memoaid의 토큰·테마·컴포넌트를 기준으로 한다."
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  # 가장 오래된 앱(100-timer, Dart 3.4)도 Flutter 3.27 이상이면 쓸 수 있다.
+  # Color.withValues가 3.27부터라 그 아래로는 내리지 않는다.
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  # 패키지에 선언한 폰트는 이 패키지를 쓰는 앱에 자동으로 함께 번들된다.
+  # 앱에서는 'packages/oloid/Pretendard'로 접근하며,
+  # OloidTypography.fontFamily와 OloidTheme가 이 이름을 대신 지정한다.
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: fonts/Pretendard-Light.otf
+          weight: 300
+        - asset: fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: fonts/Pretendard-Bold.otf
+          weight: 700
+        - asset: fonts/Pretendard-ExtraBold.otf
+          weight: 800

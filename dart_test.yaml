@@ -1,0 +1,3 @@
+tags:
+  # 카탈로그 스크린샷. 갱신: flutter test --tags golden --update-goldens
+  golden:
