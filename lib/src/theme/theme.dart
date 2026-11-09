@@ -86,12 +86,12 @@ abstract final class OloidTheme {
       ),
       // 앱이 직접 연 일반 sheet도 기본 sheet 모양을 따른다. Oloid의 sheet
       // 컴포넌트는 배경을 투명으로 넘기고 자기 외곽을 그린다.
+      // enableDrag는 테마 속성이 아니므로 sheets.dart의 showModalBottomSheet에 지정한다.
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: colors.background,
         modalBackgroundColor: colors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        enableDrag: true,
         showDragHandle: false,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(

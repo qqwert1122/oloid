@@ -1,3 +1,7 @@
+## 0.3.1
+
+* `BottomSheetThemeData`에서 지원하지 않는 `enableDrag` 인자를 제거해 앱 빌드 오류를 수정했다. 당겨 닫기 설정은 각 시트의 `showModalBottomSheet` 호출에서 유지한다.
+
 ## 0.3.0
 
 * `OloidPhotoViewer`를 추가했다. 핀치 확대·이동, 사진 넘기기, 드래그에 반응하는 전체 화면 닫기를 제공하고 갤러리에서 동작을 확인할 수 있다.

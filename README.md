@@ -27,7 +27,7 @@ dependencies:
   oloid:
     git:
       url: https://github.com/qqwert1122/oloid.git
-      ref: v0.3.0   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
+      ref: v0.3.1   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
 ```
 
 Xcode Cloud와 GitHub Actions는 앱 저장소만 clone하므로 `path:` 의존성으로는 CI 빌드가 깨진다. CI에서 받을 수 있게 반드시 git 의존성으로 둔다.
