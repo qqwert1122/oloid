@@ -1,3 +1,7 @@
+## 0.2.1
+
+* caption과 captionStrong을 12px에서 13px로 키웠다(memoaid 앱 코드와 같은 값). `Design.md`와 웹 토큰은 아직 12px이다.
+
 ## 0.2.0
 
 * `OloidButton`에 `icon`, `dense`, `tonal` 변형을 추가했다. secondary 글자색을 textPrimary 70%로 바꿔 비활성 버튼과 구분되게 했다.

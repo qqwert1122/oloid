@@ -82,7 +82,7 @@ class OloidGallery extends StatelessWidget {
                       ('subTitle 22', OloidTypography.subTitle),
                       ('headline 17', OloidTypography.headline),
                       ('body 15', OloidTypography.body),
-                      ('caption 12', OloidTypography.caption),
+                      ('caption 13', OloidTypography.caption),
                     ])
                       Text(name, style: style.copyWith(color: c.textPrimary)),
                   ],

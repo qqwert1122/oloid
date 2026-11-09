@@ -73,7 +73,7 @@ abstract final class OloidTypography {
   /// 메타데이터, 시간, chip, 작은 카운터.
   static const TextStyle caption = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: FontWeight.w400,
     height: _lineHeight,
     letterSpacing: 0,
@@ -82,7 +82,7 @@ abstract final class OloidTypography {
   /// 강조한 caption(작은 라벨, 배지).
   static const TextStyle captionStrong = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: FontWeight.w600,
     height: _lineHeight,
     letterSpacing: 0,

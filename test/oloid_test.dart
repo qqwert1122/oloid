@@ -40,7 +40,7 @@ void main() {
 
       expect(textTheme.bodyMedium!.letterSpacing, 0);
       expect(textTheme.labelLarge!.letterSpacing, 0);
-      expect(textTheme.bodySmall!.fontSize, 12);
+      expect(textTheme.bodySmall!.fontSize, 13);
     });
 
     test('Pretendard를 패키지 경로로 지정한다', () {
