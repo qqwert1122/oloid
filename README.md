@@ -27,7 +27,7 @@ dependencies:
   oloid:
     git:
       url: https://github.com/qqwert1122/oloid.git
-      ref: v0.2.1   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
+      ref: v0.3.0   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
 ```
 
 Xcode Cloud와 GitHub Actions는 앱 저장소만 clone하므로 `path:` 의존성으로는 CI 빌드가 깨진다. CI에서 받을 수 있게 반드시 git 의존성으로 둔다.
@@ -104,7 +104,7 @@ Container(
 | radius | `OloidRadius` | xs 4, chip 6, control 8, card 12, button 16, sheet 20, pill 24, dialog 32 |
 | 간격 | `OloidSpacing` | s1 4 … s8 32, screen 16, row 16, sheet 24, indent 24, pageTitle, chip |
 | 아이콘 | `OloidIconSize` | metadata 12, row 16, nav 18, picker 24 |
-| 모션 | `OloidMotion` | fast 250ms, standard 300ms, number 1000ms, toast 2s |
+| 모션 | `OloidMotion` | fast 250ms, standard 300ms, shimmer 1800ms, number 1000ms, toast 2s |
 | 그림자 | `OloidShadows` | floating(colors), dialog |
 
 ## 4. 컴포넌트
@@ -118,11 +118,13 @@ Container(
 | `OloidPanel(child:)` | stat card 같은 독립된 정보 덩어리 |
 | `OloidSectionHeader('알림')`, `OloidSettingRow(icon:, title:, subtitle:, trailing:, onTap:, padding:)` | 설정 화면. 스위치 줄은 `trailing: Switch.adaptive(...)`, 패널 안에서는 `padding`의 좌우를 0으로 |
 | `OloidButton(label:, onPressed:, variant:, icon:, dense:)` | primary / tonal(옅은 브랜드색, 보조 액션) / secondary / destructive. `dense`는 패널 안 40px 높이 |
-| `OloidConfirmSheet.show(...)` → `bool?` | 삭제·수정 전 확인 |
-| `OloidInfoSheet.show(...)` | 안내 + 확인 버튼 |
-| `showOloidBottomSheet(context, builder:, heightFactor: 0.7)` | 작성·편집·상세 sheet |
+| `OloidConfirmSheet.show(...)` → `bool?` | 삭제·수정 전 확인. 기본으로 아래로 당겨 닫기 지원 |
+| `OloidInfoSheet.show(...)` | 안내 + 확인 버튼. 기본으로 아래로 당겨 닫기 지원 |
+| `showOloidBottomSheet(context, builder:, heightFactor: 0.7)` | 작성·편집·상세 sheet. 공통 drag handle과 당겨 닫기 |
 | `OloidFloatingBar(placeholder:, onTap:)` | 하단 입력/검색 진입점. `Positioned(left: 0, right: 0, bottom: 0)` 안에 둔다 |
 | `OloidAiCard(child:)`, `OloidAiDecoration.card/inset(context)` | AI 보조 surface 전용 |
+| `OloidPhotoViewer.show(context, photos:, initialIndex:)` | 전체 화면 사진 보기. 핀치 확대, 여러 장 넘기기, 아래로 당겨 닫기 |
+| `OloidShimmerBorder(isActive:, child:)` | 홈 간단입력 등 포커스된 입력창의 강조 테두리 |
 | `OloidToast.success/error/warning/info(context, '저장했어요')` | 짧은 상태 메시지. SnackBar 대신 |
 | `OloidEmptyState(message:)` | 빈 상태 |
 | `OloidGallery()` | 카탈로그. 디버그 메뉴에 붙여 현재 테마로 확인 |
@@ -139,6 +141,53 @@ if (ok == true) OloidToast.success(context, '삭제했어요');
 ```
 
 `OloidToast`는 앱 쪽 wrapper(`ToastificationWrapper` 등)가 필요 없다.
+
+### 바텀시트 당겨 닫기
+
+Oloid 작성·편집 sheet와 확인·안내 sheet는 모두 기본으로 아래로 당겨 닫을 수 있다. 상단 중앙의 40×4 drag handle은 시트의 모서리와 배경색에 맞추고, 실제 닫기 동작은 공통 Material sheet 동작을 사용한다. `enableDrag: false`로 당겨 닫기를 끌 수 있고, 바깥 영역 탭 닫기는 `isDismissible: false`로 따로 끌 수 있다.
+
+```dart
+showOloidBottomSheet<void>(
+  context,
+  enableDrag: true,
+  builder: (context) => const EditForm(),
+);
+```
+
+### 사진 확대와 닫기
+
+사진을 누르면 검은 전체 화면 뷰어를 연다. 사진은 두 손가락으로 확대·축소하고, 확대된 상태에서는 드래그해 이동한다. 여러 장은 좌우로 넘긴다. 확대하지 않은 상태에서 아래로 충분히 당기거나 빠르게 당기면 닫히며, 당기는 동안 사진은 작아지고 배경과 상단 컨트롤은 사라져 뒤 화면이 드러난다.
+
+```dart
+await OloidPhotoViewer.show(
+  context,
+  photos: [
+    Image.file(File(imagePath), fit: BoxFit.contain),
+    Image.network(remoteImageUrl, fit: BoxFit.contain),
+  ],
+  initialIndex: 0,
+);
+```
+
+각 항목에는 `Image.file`, `Image.network` 등 화면에 맞는 사진 위젯을 전달한다. 이미지 로딩·오류 표현은 전달한 위젯에서 처리한다. 한 장만 전달하면 장수 표시를 숨긴다.
+
+### 간단입력 포커스 shimmer
+
+홈 간단입력 창은 포커스됐을 때만 primary 색 테두리에 배경색 하이라이트가 천천히 지나간다. 같은 테두리를 빠른 할 일 입력창에도 쓸 수 있다. 포커스를 잃으면 애니메이션과 테두리가 사라지고, 기기의 애니메이션 감소 설정에서는 정적인 primary 테두리를 보여준다.
+
+```dart
+AnimatedBuilder(
+  animation: focusNode,
+  builder: (context, child) => OloidShimmerBorder(
+    isActive: focusNode.hasFocus,
+    borderRadius: OloidRadius.card,
+    child: child!,
+  ),
+  child: inputCard,
+)
+```
+
+기본 테두리는 `context.oloid.primary`와 흰색 하이라이트를 사용하며, 기본 굵기는 1.25px, 반복 주기는 `OloidMotion.shimmer`(1.8초)다. `OloidGallery`의 '입력 포커스 shimmer'에서 켜고 끄며 확인할 수 있다.
 
 ## 5. 기존 앱 옮기기
 

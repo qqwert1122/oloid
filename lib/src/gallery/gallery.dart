@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../components/ai_card.dart';
 import '../components/button.dart';
 import '../components/floating.dart';
+import '../components/photo_viewer.dart';
 import '../components/sheets.dart';
+import '../components/shimmer_border.dart';
 import '../components/surfaces.dart';
 import '../components/toast.dart';
 import '../tokens/colors.dart';
@@ -217,6 +219,103 @@ class OloidGallery extends StatelessWidget {
                 icon: Icons.inbox_outlined,
                 centered: false,
               ),
+              const OloidSectionHeader('사진 뷰어'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(OloidRadius.card),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () => OloidPhotoViewer.show(
+                            context,
+                            photos: const [
+                              _GalleryPhotoArtwork(index: 0),
+                              _GalleryPhotoArtwork(index: 1),
+                            ],
+                          ),
+                          child: SizedBox(
+                            height: 184,
+                            width: double.infinity,
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                const _GalleryPhotoArtwork(index: 0),
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Container(
+                                    height: 64,
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Color(0x99000000),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Positioned(
+                                  left: 12,
+                                  right: 12,
+                                  bottom: 12,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.zoom_in_rounded,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 6),
+                                      Text(
+                                        '눌러서 사진 크게 보기',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Icon(
+                                        Icons.photo_library_outlined,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        '1 / 2',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: OloidSpacing.s2),
+                    Text(
+                      '핀치로 확대하고, 확대하지 않은 상태에서 아래로 당겨 닫아요.',
+                      style: caption,
+                    ),
+                  ],
+                ),
+              ),
+              const OloidSectionHeader('입력 포커스 shimmer'),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: _QuickEntryShimmerDemo(),
+              ),
             ],
           ),
           Positioned(
@@ -245,6 +344,167 @@ class OloidGallery extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _GalleryPhotoArtwork extends StatelessWidget {
+  const _GalleryPhotoArtwork({required this.index});
+
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _GalleryPhotoPainter(index),
+      child: const SizedBox.expand(),
+    );
+  }
+}
+
+class _GalleryPhotoPainter extends CustomPainter {
+  const _GalleryPhotoPainter(this.index);
+
+  final int index;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final isCoast = index.isEven;
+    final sky = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: isCoast
+            ? const [Color(0xFF7E879D), Color(0xFFE6A77F)]
+            : const [Color(0xFF68879A), Color(0xFFD7B993)],
+      ).createShader(Offset.zero & size);
+    canvas.drawRect(Offset.zero & size, sky);
+
+    final sunPaint = Paint()
+      ..color = isCoast ? const Color(0xFFFFE2B4) : const Color(0xFFFFD99D);
+    canvas.drawCircle(
+      Offset(size.width * 0.72, size.height * 0.34),
+      size.shortestSide * 0.105,
+      sunPaint,
+    );
+
+    final backRidge = Path()
+      ..moveTo(0, size.height * 0.66)
+      ..lineTo(size.width * 0.22, size.height * 0.48)
+      ..lineTo(size.width * 0.39, size.height * 0.62)
+      ..lineTo(size.width * 0.62, size.height * 0.44)
+      ..lineTo(size.width, size.height * 0.61)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      backRidge,
+      Paint()
+        ..color = isCoast ? const Color(0xFF756E78) : const Color(0xFF63776F),
+    );
+
+    final foreground = Path()
+      ..moveTo(0, size.height * 0.78)
+      ..quadraticBezierTo(
+        size.width * 0.24,
+        size.height * 0.62,
+        size.width * 0.48,
+        size.height * 0.78,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.75,
+        size.height * 0.92,
+        size.width,
+        size.height * 0.69,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      foreground,
+      Paint()
+        ..color = isCoast ? const Color(0xFF374D5A) : const Color(0xFF40564D),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _GalleryPhotoPainter oldDelegate) =>
+      index != oldDelegate.index;
+}
+
+class _QuickEntryShimmerDemo extends StatefulWidget {
+  const _QuickEntryShimmerDemo();
+
+  @override
+  State<_QuickEntryShimmerDemo> createState() => _QuickEntryShimmerDemoState();
+}
+
+class _QuickEntryShimmerDemoState extends State<_QuickEntryShimmerDemo> {
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = OloidColors.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                '포커스 상태 미리보기',
+                style: OloidTypography.body.copyWith(color: c.textPrimary),
+              ),
+            ),
+            Switch.adaptive(
+              value: _isFocused,
+              onChanged: (value) => setState(() => _isFocused = value),
+            ),
+          ],
+        ),
+        OloidShimmerBorder(
+          isActive: _isFocused,
+          borderRadius: OloidRadius.card,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 12, 12),
+            decoration: BoxDecoration(
+              color: c.background,
+              borderRadius: BorderRadius.circular(OloidRadius.card),
+              border: Border.all(color: c.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  '지금 떠오른 걸 가볍게 남겨보세요',
+                  style: OloidTypography.body.copyWith(
+                    color: c.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: OloidSpacing.s3),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.mic_none_rounded,
+                      color: c.textSecondary,
+                      size: OloidIconSize.nav,
+                    ),
+                    const SizedBox(width: OloidSpacing.s2),
+                    Text(
+                      '자세히 입력하기',
+                      style: OloidTypography.caption.copyWith(
+                        color: c.textSecondary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(Icons.send_rounded, color: c.primary, size: 20),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

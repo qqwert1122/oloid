@@ -69,6 +69,7 @@ abstract final class OloidIconSize {
 abstract final class OloidMotion {
   static const Duration fast = Duration(milliseconds: 250);
   static const Duration standard = Duration(milliseconds: 300);
+  static const Duration shimmer = Duration(milliseconds: 1800);
   static const Duration number = Duration(milliseconds: 1000);
   static const Duration toast = Duration(seconds: 2);
 

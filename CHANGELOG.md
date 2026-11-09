@@ -1,3 +1,9 @@
+## 0.3.0
+
+* `OloidPhotoViewer`를 추가했다. 핀치 확대·이동, 사진 넘기기, 드래그에 반응하는 전체 화면 닫기를 제공하고 갤러리에서 동작을 확인할 수 있다.
+* `OloidShimmerBorder`와 `OloidMotion.shimmer`를 추가했다. 입력 포커스 강조에 쓰며, 애니메이션 감소 설정에서는 정적인 테두리로 표시한다.
+* Oloid 바텀시트에 당겨 닫기 동작을 명시적으로 적용하고 `enableDrag` 옵션을 통일했다. 바깥 영역 탭 닫기는 `isDismissible`로 별도 제어한다.
+
 ## 0.2.1
 
 * caption과 captionStrong을 12px에서 13px로 키웠다(memoaid 앱 코드와 같은 값). `Design.md`와 웹 토큰은 아직 12px이다.

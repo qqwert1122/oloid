@@ -28,19 +28,24 @@ class OloidDragHandle extends StatelessWidget {
 /// 작성·편집·상세용 기본 bottom sheet를 연다.
 ///
 /// [heightFactor]를 주면 화면 높이의 그 비율로 고정한다(입력 sheet는 0.7,
-/// 큰 상세 sheet는 0.9). 키보드가 올라오면 그만큼 위로 밀린다.
+/// 큰 상세 sheet는 0.9). 키보드가 올라오면 그만큼 위로 밀린다. 기본적으로
+/// 아래로 당겨 닫을 수 있으며, 바깥 영역 탭 닫기와 드래그 닫기는 각각
+/// [isDismissible], [enableDrag]로 제어한다.
 Future<T?> showOloidBottomSheet<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   double? heightFactor,
   bool showDragHandle = true,
   bool isDismissible = true,
+  bool enableDrag = true,
 }) {
   return showModalBottomSheet<T>(
     context: context,
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     isDismissible: isDismissible,
+    enableDrag: enableDrag,
+    showDragHandle: false,
     builder: (context) {
       final c = OloidColors.of(context);
       final media = MediaQuery.of(context);
@@ -101,7 +106,7 @@ class OloidDialogSheet extends StatelessWidget {
 
 /// 삭제·수정처럼 중요한 액션 전에 확인을 받는 sheet.
 ///
-/// 확인을 누르면 true, 취소를 누르면 false, 바깥을 눌러 닫으면 null.
+/// 확인을 누르면 true, 취소를 누르면 false, 바깥을 누르거나 아래로 당겨 닫으면 null.
 class OloidConfirmSheet extends StatelessWidget {
   const OloidConfirmSheet({
     super.key,
@@ -133,11 +138,20 @@ class OloidConfirmSheet extends StatelessWidget {
     String cancelText = '취소',
     bool destructive = false,
     Color? confirmColor,
+
+    /// false면 바깥 영역을 눌러도 닫히지 않는다.
+    bool isDismissible = true,
+
+    /// false면 아래로 당겨 닫을 수 없다.
+    bool enableDrag = true,
   }) {
     return showModalBottomSheet<bool>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      isDismissible: isDismissible,
+      enableDrag: enableDrag,
+      showDragHandle: false,
       builder: (_) => OloidConfirmSheet(
         title: title,
         content: content,
@@ -205,11 +219,20 @@ class OloidInfoSheet extends StatelessWidget {
     String? content,
     List<String>? bullets,
     String buttonText = '확인',
+
+    /// false면 바깥 영역을 눌러도 닫히지 않는다.
+    bool isDismissible = true,
+
+    /// false면 아래로 당겨 닫을 수 없다.
+    bool enableDrag = true,
   }) {
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      isDismissible: isDismissible,
+      enableDrag: enableDrag,
+      showDragHandle: false,
       builder: (_) => OloidInfoSheet(
         title: title,
         content: content,

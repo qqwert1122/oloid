@@ -91,6 +91,8 @@ abstract final class OloidTheme {
         modalBackgroundColor: colors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        enableDrag: true,
+        showDragHandle: false,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(OloidRadius.sheet),
