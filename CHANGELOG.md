@@ -1,3 +1,7 @@
+## 0.3.2
+
+* `OloidShimmerBorder`가 활성 여부와 상관없이 같은 위젯 트리를 유지한다. 전에는 포커스로 켜지는 순간 감싼 child가 다시 만들어져 TextField의 입력 연결과 입력 중인 글자가 사라졌다. 이제 비활성일 때는 테두리만 그리지 않는다.
+
 ## 0.3.1
 
 * `BottomSheetThemeData`에서 지원하지 않는 `enableDrag` 인자를 제거해 앱 빌드 오류를 수정했다. 당겨 닫기 설정은 각 시트의 `showModalBottomSheet` 호출에서 유지한다.

@@ -73,25 +73,30 @@ class _OloidShimmerBorderState extends State<OloidShimmerBorder>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isActive) return widget.child;
-
     final colors = OloidColors.of(context);
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     final baseColor = widget.baseColor ?? colors.primary;
 
+    // 활성 여부와 상관없이 같은 위젯 트리(AnimatedBuilder → CustomPaint → child)를
+    // 유지한다. 비활성일 때 child를 바로 돌려주면 포커스가 바뀌는 순간 child가
+    // 다른 부모 아래로 옮겨져 다시 만들어지고, TextField라면 입력 연결과 입력 중인
+    // 글자를 잃는다. 비활성일 때는 painter만 빼서 아무것도 그리지 않는다.
     return AnimatedBuilder(
       animation: _controller,
       child: widget.child,
       builder: (context, child) => CustomPaint(
-        foregroundPainter: _OloidShimmerBorderPainter(
-          progress: _controller.value,
-          borderRadius: widget.borderRadius,
-          borderWidth: widget.borderWidth,
-          baseColor: baseColor,
-          highlightColor:
-              reduceMotion ? baseColor : widget.highlightColor ?? Colors.white,
-          reduceMotion: reduceMotion,
-        ),
+        foregroundPainter: widget.isActive
+            ? _OloidShimmerBorderPainter(
+                progress: _controller.value,
+                borderRadius: widget.borderRadius,
+                borderWidth: widget.borderWidth,
+                baseColor: baseColor,
+                highlightColor: reduceMotion
+                    ? baseColor
+                    : widget.highlightColor ?? Colors.white,
+                reduceMotion: reduceMotion,
+              )
+            : null,
         child: child,
       ),
     );

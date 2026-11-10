@@ -191,6 +191,43 @@ void main() {
     });
   });
 
+  group('OloidShimmerBorder', () {
+    testWidgets('포커스로 켜져도 감싼 입력창을 다시 만들지 않는다', (tester) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+
+      await tester.pumpWidget(
+        _app(
+          Scaffold(
+            body: AnimatedBuilder(
+              animation: focusNode,
+              builder: (context, child) => OloidShimmerBorder(
+                isActive: focusNode.hasFocus,
+                child: child!,
+              ),
+              child: TextField(focusNode: focusNode),
+            ),
+          ),
+        ),
+      );
+
+      final before = tester.state(find.byType(EditableText));
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      expect(focusNode.hasFocus, isTrue);
+      expect(tester.state(find.byType(EditableText)), same(before));
+
+      await tester.enterText(find.byType(TextField), '입력 유지');
+      await tester.pump();
+      expect(find.text('입력 유지'), findsOneWidget);
+
+      focusNode.unfocus();
+      await tester.pump();
+      expect(tester.state(find.byType(EditableText)), same(before));
+      expect(find.text('입력 유지'), findsOneWidget);
+    });
+  });
+
   testWidgets('OloidGallery가 라이트/다크 모두 오류 없이 그려진다', (tester) async {
     tester.view.physicalSize = const Size(1170, 2532);
     tester.view.devicePixelRatio = 3;
