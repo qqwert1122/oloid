@@ -1,3 +1,8 @@
+## 0.4.0
+
+* `showOloidBottomSheet`가 memoaid 상세·편집 sheet와 같은 상단 바를 기본으로 그린다: 왼쪽 원형 닫기, 가운데 제목(`title`), 오른쪽 원형 액션(`actions`). 끄려면 `showTopBar: false`. 기존 호출도 이제 닫기 버튼이 생긴다.
+* `OloidSheetTopBar`, `OloidSheetButton`(42px 회색 원, 라이트 검정·다크 textPrimary 아이콘)을 추가했다.
+
 ## 0.3.2
 
 * `OloidShimmerBorder`가 활성 여부와 상관없이 같은 위젯 트리를 유지한다. 전에는 포커스로 켜지는 순간 감싼 child가 다시 만들어져 TextField의 입력 연결과 입력 중인 글자가 사라졌다. 이제 비활성일 때는 테두리만 그리지 않는다.

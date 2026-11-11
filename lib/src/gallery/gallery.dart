@@ -327,6 +327,14 @@ class OloidGallery extends StatelessWidget {
               onTap: () => showOloidBottomSheet<void>(
                 context,
                 heightFactor: 0.7,
+                title: '새 기록',
+                actions: [
+                  OloidSheetButton(
+                    icon: Icons.check_rounded,
+                    tooltip: '저장',
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
                 builder: (context) => Padding(
                   padding: const EdgeInsets.all(16),
                   child: TextField(

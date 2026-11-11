@@ -67,6 +67,107 @@ void main() {
     });
   });
 
+  group('showOloidBottomSheet', () {
+    Widget opener(
+      void Function(BuildContext context) open, {
+      ThemeData? theme,
+    }) =>
+        _app(
+          Builder(
+            builder: (context) => TextButton(
+              onPressed: () => open(context),
+              child: const Text('open'),
+            ),
+          ),
+          theme: theme,
+        );
+
+    testWidgets('상단 바가 기본: 닫기, 가운데 제목, 오른쪽 액션', (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var saved = false;
+      await tester.pumpWidget(
+        opener(
+          (context) => showOloidBottomSheet<void>(
+            context,
+            title: '태그 이름 수정',
+            actions: [
+              OloidSheetButton(
+                icon: Icons.check_rounded,
+                tooltip: '저장',
+                onPressed: () => saved = true,
+              ),
+              OloidSheetButton(
+                icon: Icons.more_horiz_rounded,
+                tooltip: '더보기',
+                onPressed: () {},
+              ),
+            ],
+            builder: (_) => const SizedBox(height: 120),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OloidSheetTopBar), findsOneWidget);
+      // 오른쪽 버튼이 두 개여도 제목은 화면 가운데에 있다.
+      expect(tester.getCenter(find.text('태그 이름 수정')).dx, closeTo(195, 1));
+      expect(
+        tester.getCenter(find.byTooltip('닫기')).dx,
+        lessThan(tester.getCenter(find.text('태그 이름 수정')).dx),
+      );
+
+      await tester.tap(find.byTooltip('저장'));
+      expect(saved, isTrue);
+
+      await tester.tap(find.byTooltip('닫기'));
+      await tester.pumpAndSettle();
+      expect(find.byType(OloidSheetTopBar), findsNothing);
+    });
+
+    testWidgets('showTopBar: false면 손잡이만 그린다', (tester) async {
+      await tester.pumpWidget(
+        opener(
+          (context) => showOloidBottomSheet<void>(
+            context,
+            showTopBar: false,
+            builder: (_) => const Text('내용'),
+          ),
+        ),
+      );
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(OloidDragHandle), findsOneWidget);
+      expect(find.byType(OloidSheetTopBar), findsNothing);
+      expect(find.text('내용'), findsOneWidget);
+    });
+
+    testWidgets('원형 버튼 아이콘은 라이트 검정, 다크 textPrimary', (tester) async {
+      for (final (theme, expected) in [
+        (OloidTheme.light(), Colors.black),
+        (OloidTheme.dark(), Colors.white),
+      ]) {
+        await tester.pumpWidget(
+          _app(
+            OloidSheetButton(
+              icon: Icons.close_rounded,
+              tooltip: '닫기',
+              onPressed: () {},
+            ),
+            theme: theme,
+          ),
+        );
+        // MaterialApp은 테마를 바꿀 때 애니메이션하므로 끝날 때까지 기다린다.
+        await tester.pumpAndSettle();
+        final icon = tester.widget<Icon>(find.byIcon(Icons.close_rounded));
+        expect(icon.color, expected);
+      }
+    });
+  });
+
   group('OloidConfirmSheet', () {
     testWidgets('확인은 true, 취소는 false를 돌려준다', (tester) async {
       bool? result;

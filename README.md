@@ -27,7 +27,7 @@ dependencies:
   oloid:
     git:
       url: https://github.com/qqwert1122/oloid.git
-      ref: v0.3.2   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
+      ref: v0.4.0   # 태그로 고정한다. main을 쓰면 빌드마다 결과가 달라질 수 있다.
 ```
 
 Xcode Cloud와 GitHub Actions는 앱 저장소만 clone하므로 `path:` 의존성으로는 CI 빌드가 깨진다. CI에서 받을 수 있게 반드시 git 의존성으로 둔다.
@@ -120,7 +120,8 @@ Container(
 | `OloidButton(label:, onPressed:, variant:, icon:, dense:)` | primary / tonal(옅은 브랜드색, 보조 액션) / secondary / destructive. `dense`는 패널 안 40px 높이 |
 | `OloidConfirmSheet.show(...)` → `bool?` | 삭제·수정 전 확인. 기본으로 아래로 당겨 닫기 지원 |
 | `OloidInfoSheet.show(...)` | 안내 + 확인 버튼. 기본으로 아래로 당겨 닫기 지원 |
-| `showOloidBottomSheet(context, builder:, heightFactor: 0.7)` | 작성·편집·상세 sheet. 공통 drag handle과 당겨 닫기 |
+| `showOloidBottomSheet(context, title:, actions:, builder:, heightFactor: 0.7)` | 작성·편집·상세 sheet. 손잡이 아래 상단 바(왼쪽 닫기, 가운데 제목, 오른쪽 액션)가 기본. 상단 바가 필요 없으면 `showTopBar: false` |
+| `OloidSheetTopBar(title:, actions:)`, `OloidSheetButton(icon:, tooltip:, onPressed:)` | 상세·편집 sheet 상단 바와 그 안의 42px 회색 원형 버튼. sheet를 직접 그릴 때 쓴다 |
 | `OloidFloatingBar(placeholder:, onTap:)` | 하단 입력/검색 진입점. `Positioned(left: 0, right: 0, bottom: 0)` 안에 둔다 |
 | `OloidAiCard(child:)`, `OloidAiDecoration.card/inset(context)` | AI 보조 surface 전용 |
 | `OloidPhotoViewer.show(context, photos:, initialIndex:)` | 전체 화면 사진 보기. 핀치 확대, 여러 장 넘기기, 아래로 당겨 닫기 |
@@ -141,6 +142,21 @@ if (ok == true) OloidToast.success(context, '삭제했어요');
 ```
 
 `OloidToast`는 앱 쪽 wrapper(`ToastificationWrapper` 등)가 필요 없다.
+
+### 바텀시트 상단 바
+
+상세·편집 sheet는 memoaid와 같은 상단 바를 쓴다. 손잡이 아래 좌우 16px·위아래 8px 여백에 왼쪽 원형 닫기 버튼, 가운데 제목(headline 17/600), 오른쪽 원형 액션 버튼(수정·저장·더보기)을 둔다. 버튼은 42px 회색(`backgroundSecondary`) 원이고 아이콘은 라이트에서 검정, 다크에서 textPrimary다. 제목은 오른쪽 버튼 수와 상관없이 sheet 가운데에 온다. 확인·안내 sheet는 이 상단 바 없이 왼쪽 정렬 제목을 쓴다.
+
+```dart
+showOloidBottomSheet<void>(
+  context,
+  title: '태그 이름 수정',
+  actions: [
+    OloidSheetButton(icon: Icons.check_rounded, tooltip: '저장', onPressed: save),
+  ],
+  builder: (context) => const EditForm(),
+);
+```
 
 ### 바텀시트 당겨 닫기
 

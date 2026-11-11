@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../tokens/colors.dart';
 import '../tokens/tokens.dart';
@@ -25,7 +26,131 @@ class OloidDragHandle extends StatelessWidget {
   }
 }
 
+/// sheet 상단 바의 원형 버튼(닫기·수정·저장·더보기 등).
+///
+/// 회색 원 위에 아이콘을 그린다. 일반 액션 아이콘은 라이트에서 검정,
+/// 다크에서 textPrimary이고, 선택·완료처럼 의미가 있으면 [iconColor]를 준다.
+class OloidSheetButton extends StatelessWidget {
+  const OloidSheetButton({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    this.iconColor,
+  });
+
+  static const double size = 42;
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback? onPressed;
+  final Color? iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = OloidColors.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final enabled = onPressed != null;
+    final color = !enabled
+        ? c.textSecondary
+        : iconColor ?? (isDark ? c.textPrimary : Colors.black);
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: c.backgroundSecondary,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        tooltip: tooltip,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints.tightFor(width: size, height: size),
+        onPressed: !enabled
+            ? null
+            : () {
+                HapticFeedback.lightImpact();
+                onPressed!();
+              },
+        icon: Icon(icon, size: OloidIconSize.row + 2, color: color),
+      ),
+    );
+  }
+}
+
+/// 상세·편집 sheet의 상단 바. 왼쪽 닫기, 가운데 제목, 오른쪽 액션.
+///
+/// 제목은 양쪽 버튼 수와 상관없이 sheet 가운데에 둔다.
+class OloidSheetTopBar extends StatelessWidget {
+  const OloidSheetTopBar({
+    super.key,
+    this.title,
+    this.actions = const [],
+    this.showCloseButton = true,
+    this.closeTooltip = '닫기',
+    this.onClose,
+  });
+
+  final String? title;
+
+  /// 오른쪽 버튼들. 보통 [OloidSheetButton]이다.
+  final List<Widget> actions;
+  final bool showCloseButton;
+  final String closeTooltip;
+
+  /// 없으면 sheet를 닫는다(결과 null).
+  final VoidCallback? onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = OloidColors.of(context);
+    final title = this.title;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: SizedBox(
+        height: OloidSheetButton.size,
+        child: NavigationToolbar(
+          centerMiddle: true,
+          middleSpacing: OloidSpacing.s2,
+          leading: showCloseButton
+              ? OloidSheetButton(
+                  icon: Icons.close_rounded,
+                  tooltip: closeTooltip,
+                  onPressed: onClose ?? () => Navigator.of(context).maybePop(),
+                )
+              : null,
+          middle: title == null
+              ? null
+              : Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: OloidTypography.headline.copyWith(
+                    color: c.textPrimary,
+                  ),
+                ),
+          trailing: actions.isEmpty
+              ? null
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (var i = 0; i < actions.length; i++) ...[
+                      if (i > 0) const SizedBox(width: OloidSpacing.s2),
+                      actions[i],
+                    ],
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
 /// 작성·편집·상세용 기본 bottom sheet를 연다.
+///
+/// 손잡이 아래에 [OloidSheetTopBar]를 기본으로 그린다: 왼쪽 닫기 버튼,
+/// 가운데 [title], 오른쪽 [actions]. 상단 바가 필요 없는 sheet는
+/// [showTopBar]를 false로 둔다.
 ///
 /// [heightFactor]를 주면 화면 높이의 그 비율로 고정한다(입력 sheet는 0.7,
 /// 큰 상세 sheet는 0.9). 키보드가 올라오면 그만큼 위로 밀린다. 기본적으로
@@ -34,6 +159,10 @@ class OloidDragHandle extends StatelessWidget {
 Future<T?> showOloidBottomSheet<T>(
   BuildContext context, {
   required WidgetBuilder builder,
+  String? title,
+  List<Widget> actions = const [],
+  bool showTopBar = true,
+  String closeTooltip = '닫기',
   double? heightFactor,
   bool showDragHandle = true,
   bool isDismissible = true,
@@ -53,6 +182,12 @@ Future<T?> showOloidBottomSheet<T>(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (showDragHandle) const OloidDragHandle(),
+          if (showTopBar)
+            OloidSheetTopBar(
+              title: title,
+              actions: actions,
+              closeTooltip: closeTooltip,
+            ),
           Flexible(child: builder(context)),
         ],
       );
